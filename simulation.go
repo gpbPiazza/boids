@@ -1,4 +1,4 @@
-package boids
+package main
 
 import (
 	"image/color"
@@ -11,17 +11,21 @@ const (
 	boidsCount                    = 500
 )
 
-var green = color.RGBA{R: 10, G: 50, B: 255, A: 0}
+var (
+	green = color.RGBA{R: 10, G: 50, B: 255, A: 0}
+)
 
 type Simulation struct {
 	ScreenWidthPx  int
 	ScreenHeightPx int
+	Flock          []*Boid
 }
 
-func NewSimulation() *Simulation {
+func NewSimulation(flock []*Boid) *Simulation {
 	return &Simulation{
 		ScreenWidthPx:  screenWidthPx,
 		ScreenHeightPx: screenHeightPx,
+		Flock:          flock,
 	}
 }
 
@@ -29,10 +33,16 @@ func (s *Simulation) Update() error {
 	return nil
 }
 
-func (s *Simulation) Simulate(screen *ebiten.Image) {
+func (s *Simulation) Draw(screen *ebiten.Image) {
+	for _, boid := range s.Flock {
+		screen.Set(int(boid.position.x+1), int(boid.position.y+1), green)
+		screen.Set(int(boid.position.x-1), int(boid.position.y-1), green)
+		screen.Set(int(boid.position.x), int(boid.position.y+1), green)
+		screen.Set(int(boid.position.x), int(boid.position.y-1), green)
+	}
 
 }
 
-func (s *Simulation) Layout() (int, int) {
+func (s *Simulation) Layout(_, _ int) (int, int) {
 	return s.ScreenWidthPx, s.ScreenHeightPx
 }

@@ -1,4 +1,4 @@
-package boids
+package main
 
 import "math"
 

@@ -7,7 +7,9 @@ import (
 )
 
 func main() {
+	setEmptyFlocksMapsPosition()
 	flock := NewFlock()
+	setEachBoidPositionIntoFlockMap(flock)
 	s := NewSimulation(flock)
 
 	ebiten.SetWindowSize(s.ScreenWidthPx, s.ScreenWidthPx)

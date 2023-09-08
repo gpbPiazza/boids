@@ -8,11 +8,10 @@ import (
 
 const (
 	screenWidthPx, screenHeightPx = 640, 360
-	boidsCount                    = 500
 )
 
 var (
-	green = color.RGBA{R: 10, G: 50, B: 255, A: 0}
+	green = color.RGBA{R: 10, G: 255, B: 50}
 )
 
 type Simulation struct {

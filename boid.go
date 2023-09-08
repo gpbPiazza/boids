@@ -5,6 +5,16 @@ import (
 	"time"
 )
 
+const (
+	boidsCount         = 500
+	boidViewRadius     = 13
+	adjustVelocityRate = 0.015
+)
+
+var (
+	flocksMapPositions [screenWidthPx + 1][screenHeightPx + 1]int
+)
+
 type Boid struct {
 	position Vector2D
 	velocity Vector2D
@@ -30,8 +40,20 @@ func (b *Boid) fly() {
 	}
 }
 
+func (b *Boid) calcAcceleration() Vector2D {
+	accel := Vector2D{x: 0, y: 0}
+	return accel
+}
+
 func (b *Boid) move() {
+	// the limit methiod its to ensure the boid will not run faster than 1 px per cycle
+	b.velocity = b.velocity.Add(b.calcAcceleration()).LimitVal(-1, 1)
+	//set the current position to -1, empty space
+	flocksMapPositions[int(b.position.x)][int(b.position.y)] = -1
+	// move
 	b.position = b.position.Add(b.velocity)
+	// fill the new position into the map
+	flocksMapPositions[int(b.position.x)][int(b.position.y)] = b.id
 
 	nextPosition := b.position.Add(b.velocity)
 	// Ensure the boid will not pass throught the screen limits
@@ -47,8 +69,22 @@ func (b *Boid) move() {
 
 func NewFlock() []*Boid {
 	var flock []*Boid
-	for i := 0; i < 500; i++ {
+	for i := 0; i < boidsCount; i++ {
 		flock = append(flock, NewBoid(i))
 	}
 	return flock
+}
+
+func setEmptyFlocksMapsPosition() {
+	for i, row := range flocksMapPositions {
+		for j := range row {
+			flocksMapPositions[i][j] = -1
+		}
+	}
+}
+
+func setEachBoidPositionIntoFlockMap(flock []*Boid) {
+	for _, boid := range flock {
+		flocksMapPositions[int(boid.position.x)][int(boid.position.y)] = boid.id
+	}
 }

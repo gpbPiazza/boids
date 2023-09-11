@@ -7,7 +7,7 @@ import (
 )
 
 const (
-	screenWidthPx, screenHeightPx = 640, 360
+	screenWidth, screenHeight = 640, 360
 )
 
 var (
@@ -17,14 +17,12 @@ var (
 type Simulation struct {
 	ScreenWidthPx  int
 	ScreenHeightPx int
-	Flock          []*Boid
 }
 
-func NewSimulation(flock []*Boid) *Simulation {
+func NewSimulation() *Simulation {
 	return &Simulation{
-		ScreenWidthPx:  screenWidthPx,
-		ScreenHeightPx: screenHeightPx,
-		Flock:          flock,
+		ScreenWidthPx:  screenWidth,
+		ScreenHeightPx: screenHeight,
 	}
 }
 
@@ -33,7 +31,7 @@ func (s *Simulation) Update() error {
 }
 
 func (s *Simulation) Draw(screen *ebiten.Image) {
-	for _, boid := range s.Flock {
+	for _, boid := range flock {
 		screen.Set(int(boid.position.x+1), int(boid.position.y+1), green)
 		screen.Set(int(boid.position.x-1), int(boid.position.y-1), green)
 		screen.Set(int(boid.position.x), int(boid.position.y+1), green)

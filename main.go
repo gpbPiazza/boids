@@ -8,9 +8,9 @@ import (
 
 func main() {
 	setEmptyFlocksMapsPosition()
-	flock := NewFlock()
-	setEachBoidPositionIntoFlockMap(flock)
-	s := NewSimulation(flock)
+	NewFlock()
+	setEachBoidPositionIntoFlockMap()
+	s := NewSimulation()
 
 	ebiten.SetWindowSize(s.ScreenWidthPx, s.ScreenWidthPx)
 	ebiten.SetWindowTitle("Boids simulation")

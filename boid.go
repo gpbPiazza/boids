@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	boidsCount     = 500
+	boidsCount     = 600
 	boidViewRadius = 13
 	adjustRate     = 0.15
 )
@@ -52,9 +52,6 @@ func (b *Boid) calcAcceleration() Vector2D {
 	allBoidsPosition := Vector2D{x: 0, y: 0}
 	allBoidsSeparation := Vector2D{x: 0, y: 0}
 	boidsCount := 0.0
-
-	// Começa na posição mais baixa de X e anda até o máximo ou limite da tela
-	// iteração entre todos os elementos dentros da viewBox do Boid
 
 	rwLocker.RLock()
 	for i := math.Max(lowerView.x, 0); i <= math.Min(upperView.x, screenWidth); i++ {
@@ -113,7 +110,7 @@ func (b *Boid) move() {
 	accel := b.calcAcceleration()
 
 	rwLocker.Lock()
-	// the limit methiod its to ensure the boid will not run faster than 1 px per cycle
+	// the limit method its to ensure the boid will not run faster than 1 px per cycle
 	b.velocity = b.velocity.Add(accel).LimitVal(-1, 1)
 	//set the current position to -1, empty space
 	flockMapPositions[int(b.position.x)][int(b.position.y)] = -1

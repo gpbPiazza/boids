@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	boidsCount         = 500
-	boidViewRadius     = 13
-	adjustVelocityRate = 0.015
+	boidsCount     = 500
+	boidViewRadius = 13
+	adjustRate     = 0.015
 )
 
 var (
@@ -51,7 +51,6 @@ func (b *Boid) calcAcceleration() Vector2D {
 	allBoidsVelocity := Vector2D{x: 0, y: 0}
 	allBoidsPosition := Vector2D{x: 0, y: 0}
 	allBoidsSeparation := Vector2D{x: 0, y: 0}
-	accel := Vector2D{x: 0, y: 0}
 	boidsCount := 0.0
 
 	// Começa na posição mais baixa de X e anda até o máximo ou limite da tela
@@ -76,16 +75,38 @@ func (b *Boid) calcAcceleration() Vector2D {
 	}
 	rwLocker.RUnlock()
 
+	borderBounceX := b.borderBounce(b.position.x, screenWidth)
+	borderBouncey := b.borderBounce(b.position.y, screenHeight)
+	accel := Vector2D{x: borderBounceX, y: borderBouncey}
+
 	if boidsCount > 0 {
 		avgVelocity := allBoidsVelocity.DivisionVal(boidsCount)
 		avgPosition := allBoidsPosition.DivisionVal(boidsCount)
-		accelAligment := avgVelocity.Subtract(b.velocity).MultiplyVal(adjustVelocityRate)
-		accelCohesion := avgPosition.Subtract(b.position).MultiplyVal(adjustVelocityRate)
-		accelSepartion := allBoidsSeparation.MultiplyVal(adjustVelocityRate)
+		accelAligment := avgVelocity.Subtract(b.velocity).MultiplyVal(adjustRate)
+		accelCohesion := avgPosition.Subtract(b.position).MultiplyVal(adjustRate)
+		accelSepartion := allBoidsSeparation.MultiplyVal(adjustRate)
 		accel = accel.Add(accelAligment).Add(accelCohesion).Add(accelSepartion)
 	}
 
 	return accel
+}
+
+// Quanto mais próximo da borda mais rápido será o bounce
+func (b *Boid) borderBounce(pos, border float64) float64 {
+
+	// Está próximo da bater na borda, passou do limite de vistualização
+	// ou seja o passarinho viu a parede e irá mudar de direção
+	if pos < boidViewRadius {
+		return 1 / pos
+	}
+	// Is the same thing but in the other side of the screenView
+	// o primeiro If é para o boid que está próximo da parede em que X é muito pequeno
+	// Aqui o x é grande, o mesmo para Y.
+	if pos > border-boidViewRadius {
+		return 1 / (pos - border)
+	}
+
+	return 0
 }
 
 func (b *Boid) move() {
@@ -101,16 +122,6 @@ func (b *Boid) move() {
 	// fill the new position into the map
 	flockMapPositions[int(b.position.x)][int(b.position.y)] = b.id
 
-	nextPosition := b.position.Add(b.velocity)
-	// Ensure the boid will not pass throught the screen limits
-	// If reaches the limit will change the direction
-	if nextPosition.x >= screenWidth || nextPosition.x < 0 {
-		b.velocity = Vector2D{x: -b.velocity.x, y: b.velocity.y}
-	}
-
-	if nextPosition.y >= screenHeight || nextPosition.y < 0 {
-		b.velocity = Vector2D{x: b.velocity.x, y: -b.velocity.y}
-	}
 	rwLocker.Unlock()
 }
 

@@ -10,7 +10,7 @@ import (
 const (
 	boidsCount     = 500
 	boidViewRadius = 13
-	adjustRate     = 0.015
+	adjustRate     = 0.15
 )
 
 var (

@@ -15,14 +15,14 @@ var (
 )
 
 type Simulation struct {
-	ScreenWidthPx  int
-	ScreenHeightPx int
+	ScreenWidth  int
+	ScreenHeight int
 }
 
 func NewSimulation() *Simulation {
 	return &Simulation{
-		ScreenWidthPx:  screenWidth,
-		ScreenHeightPx: screenHeight,
+		ScreenWidth:  screenWidth,
+		ScreenHeight: screenHeight,
 	}
 }
 
@@ -41,5 +41,5 @@ func (s *Simulation) Draw(screen *ebiten.Image) {
 }
 
 func (s *Simulation) Layout(_, _ int) (int, int) {
-	return s.ScreenWidthPx, s.ScreenHeightPx
+	return s.ScreenWidth, s.ScreenHeight
 }
